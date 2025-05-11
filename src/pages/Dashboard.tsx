@@ -5,7 +5,7 @@ import PageLayout from "@/components/layout/PageLayout";
 import FilterBar from "@/components/dashboard/FilterBar";
 import StatCard from "@/components/dashboard/StatCard";
 import ChartCard from "@/components/dashboard/ChartCard";
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -27,6 +27,7 @@ import {
   ZAxis,
 } from "recharts";
 import { DataRow, analyzeData } from "@/utils/csvParser";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [filters, setFilters] = useState<{
@@ -101,7 +102,25 @@ const Dashboard = () => {
   };
 
   if (!hasUploadedData || !dashboardData) {
-    return null; // Don't render anything while redirecting or loading
+    return (
+      <PageLayout>
+        <div className="max-w-5xl mx-auto px-4 py-12 text-center">
+          <div className="flex flex-col items-center justify-center py-12">
+            <Upload className="h-16 w-16 text-muted-foreground mb-4" />
+            <h2 className="text-2xl font-bold mb-2">No Data Available</h2>
+            <p className="text-muted-foreground mb-6">
+              You need to upload a CSV file first to see the analysis dashboard.
+            </p>
+            <Button 
+              onClick={() => navigate('/upload')}
+              className="bg-marine-blue hover:bg-steel-blue"
+            >
+              Upload Data Now
+            </Button>
+          </div>
+        </div>
+      </PageLayout>
+    );
   }
 
   return (

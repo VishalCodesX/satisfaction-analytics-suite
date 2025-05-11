@@ -31,11 +31,11 @@ const MainNavbar = () => {
               <Link to="/home" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
                 Home
               </Link>
-              <Link to="/dashboard" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
-                Dashboard
-              </Link>
               <Link to="/upload" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
                 Upload Data
+              </Link>
+              <Link to="/dashboard" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
+                Dashboard
               </Link>
               <Link to="/about" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
                 About
@@ -46,7 +46,7 @@ const MainNavbar = () => {
           <div className="hidden md:flex items-center space-x-2">
             <Button
               className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/upload")}
             >
               Get Started
             </Button>
@@ -81,18 +81,18 @@ const MainNavbar = () => {
               Home
             </Link>
             <Link
-              to="/dashboard"
-              className="block py-2 px-3 rounded-md hover:bg-steel-blue transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Dashboard
-            </Link>
-            <Link
               to="/upload"
               className="block py-2 px-3 rounded-md hover:bg-steel-blue transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
               Upload Data
+            </Link>
+            <Link
+              to="/dashboard"
+              className="block py-2 px-3 rounded-md hover:bg-steel-blue transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Dashboard
             </Link>
             <Link
               to="/about"
@@ -106,7 +106,7 @@ const MainNavbar = () => {
             <Button 
               className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue w-full"
               onClick={() => {
-                navigate("/dashboard");
+                navigate("/upload");
                 setMobileMenuOpen(false);
               }}
             >
