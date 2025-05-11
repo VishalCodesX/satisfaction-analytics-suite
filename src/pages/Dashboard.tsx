@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PageLayout from "@/components/layout/PageLayout";
 import FilterBar from "@/components/dashboard/FilterBar";
@@ -257,12 +256,15 @@ const Dashboard = () => {
                   />
                   <Tooltip 
                     cursor={{ strokeDasharray: '3 3' }} 
-                    formatter={(value, name, props) => {
+                    formatter={(value, name) => {
                       if (name === 'Delivery Time') return [`${value} days`, name];
                       if (name === 'Satisfaction') return [`${value} / 5`, name];
                       return [value, name];
                     }}
-                    labelFormatter={(label) => props.payload[0]?.payload?.name || ''}
+                    labelFormatter={(label) => {
+                      const dataPoint = satisfactionByDeliveryData.find((_, index) => index === label);
+                      return dataPoint?.name || '';
+                    }}
                   />
                   <Scatter 
                     name="Satisfaction vs Delivery" 

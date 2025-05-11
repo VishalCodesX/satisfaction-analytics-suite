@@ -73,7 +73,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
           <SelectValue placeholder="Product Category" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Categories</SelectItem>
+          <SelectItem value="all">All Categories</SelectItem>
           <SelectItem value="electronics">Electronics</SelectItem>
           <SelectItem value="clothing">Clothing</SelectItem>
           <SelectItem value="home">Home & Kitchen</SelectItem>
@@ -89,7 +89,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
           <SelectValue placeholder="Satisfaction" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Ratings</SelectItem>
+          <SelectItem value="all">All Ratings</SelectItem>
           <SelectItem value="high">High Satisfaction</SelectItem>
           <SelectItem value="medium">Medium Satisfaction</SelectItem>
           <SelectItem value="low">Low Satisfaction</SelectItem>
