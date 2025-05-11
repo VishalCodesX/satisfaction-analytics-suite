@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         if (event === 'SIGNED_IN') {
           toast.success("Signed in successfully");
-          navigate("/");
+          navigate("/home");
         }
         if (event === 'SIGNED_OUT') {
           toast.info("Signed out");

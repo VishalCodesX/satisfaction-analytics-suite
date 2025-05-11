@@ -6,7 +6,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PieChart } from "lucide-react";
-import PageLayout from "@/components/layout/PageLayout";
 import {
   Card,
   CardContent,
@@ -62,9 +61,9 @@ const Auth = () => {
   const signupForm = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
-      fullName: "",
       confirmPassword: "",
     },
   });
@@ -72,7 +71,7 @@ const Auth = () => {
   const onLoginSubmit = async (values: LoginFormValues) => {
     try {
       await signIn(values.email, values.password);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -98,175 +97,173 @@ const Auth = () => {
   };
 
   return (
-    <PageLayout>
-      <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-background to-sky-blue/5">
-        <div className="w-full max-w-md">
-          <div className="flex justify-center mb-8">
-            <div className="p-3 bg-marine-blue rounded-full w-16 h-16 flex items-center justify-center">
-              <PieChart className="h-10 w-10 text-sky-blue" />
-            </div>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-b from-background to-sky-blue/5">
+      <div className="w-full max-w-md">
+        <div className="flex justify-center mb-8">
+          <div className="p-3 bg-marine-blue rounded-full w-16 h-16 flex items-center justify-center">
+            <PieChart className="h-10 w-10 text-sky-blue" />
           </div>
-          
-          <Card className="border-steel-blue/20 shadow-lg animate-fade-in">
-            <CardHeader>
-              <CardTitle className="text-2xl text-center text-marine-blue">
-                {isLogin ? "Sign In to InsightAnalytics" : "Create Your Account"}
-              </CardTitle>
-              <CardDescription className="text-center">
-                {isLogin 
-                  ? "Enter your email and password to access your dashboard" 
-                  : "Fill in your details to get started with analytics"
-                }
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent>
-              {isLogin ? (
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="your.email@example.com" 
-                              {...field} 
-                              type="email"
-                              autoComplete="email"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="******" 
-                              {...field} 
-                              type="password"
-                              autoComplete="current-password"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-marine-blue hover:bg-steel-blue"
-                      disabled={loginForm.formState.isSubmitting}
-                    >
-                      {loginForm.formState.isSubmitting ? "Signing in..." : "Sign In"}
-                    </Button>
-                  </form>
-                </Form>
-              ) : (
-                <Form {...signupForm}>
-                  <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
-                    <FormField
-                      control={signupForm.control}
-                      name="fullName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="John Doe" 
-                              {...field} 
-                              autoComplete="name"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={signupForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="your.email@example.com" 
-                              {...field} 
-                              type="email"
-                              autoComplete="email"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={signupForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="******" 
-                              {...field} 
-                              type="password"
-                              autoComplete="new-password"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={signupForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="******" 
-                              {...field} 
-                              type="password"
-                              autoComplete="new-password"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-marine-blue hover:bg-steel-blue"
-                      disabled={signupForm.formState.isSubmitting}
-                    >
-                      {signupForm.formState.isSubmitting ? "Creating account..." : "Create Account"}
-                    </Button>
-                  </form>
-                </Form>
-              )}
-            </CardContent>
-            
-            <CardFooter className="flex flex-col space-y-4">
-              <div className="text-sm text-center text-gray-500">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}
-                <Button variant="link" onClick={toggleForm} className="px-2">
-                  {isLogin ? "Sign up" : "Sign in"}
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
         </div>
+        
+        <Card className="border-steel-blue/20 shadow-lg animate-fade-in">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center text-marine-blue">
+              {isLogin ? "Sign In to InsightAnalytics" : "Create Your Account"}
+            </CardTitle>
+            <CardDescription className="text-center">
+              {isLogin 
+                ? "Enter your email and password to access your dashboard" 
+                : "Fill in your details to get started with analytics"
+              }
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            {isLogin ? (
+              <Form {...loginForm}>
+                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                  <FormField
+                    control={loginForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="your.email@example.com" 
+                            {...field} 
+                            type="email"
+                            autoComplete="email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={loginForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="******" 
+                            {...field} 
+                            type="password"
+                            autoComplete="current-password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-marine-blue hover:bg-steel-blue"
+                    disabled={loginForm.formState.isSubmitting}
+                  >
+                    {loginForm.formState.isSubmitting ? "Signing in..." : "Sign In"}
+                  </Button>
+                </form>
+              </Form>
+            ) : (
+              <Form {...signupForm}>
+                <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
+                  <FormField
+                    control={signupForm.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="John Doe" 
+                            {...field} 
+                            autoComplete="name"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={signupForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="your.email@example.com" 
+                            {...field} 
+                            type="email"
+                            autoComplete="email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={signupForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="******" 
+                            {...field} 
+                            type="password"
+                            autoComplete="new-password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={signupForm.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm Password</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="******" 
+                            {...field} 
+                            type="password"
+                            autoComplete="new-password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-marine-blue hover:bg-steel-blue"
+                    disabled={signupForm.formState.isSubmitting}
+                  >
+                    {signupForm.formState.isSubmitting ? "Creating account..." : "Create Account"}
+                  </Button>
+                </form>
+              </Form>
+            )}
+          </CardContent>
+          
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="text-sm text-center text-gray-500">
+              {isLogin ? "Don't have an account?" : "Already have an account?"}
+              <Button variant="link" onClick={toggleForm} className="px-2">
+                {isLogin ? "Sign up" : "Sign in"}
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
-    </PageLayout>
+    </div>
   );
 };
 

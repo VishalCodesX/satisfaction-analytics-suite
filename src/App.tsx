@@ -35,7 +35,7 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   if (loading) return <div>Loading...</div>;
   
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/home" replace />;
   }
   
   return <>{children}</>;
@@ -44,7 +44,8 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
 // Main app component with route providers
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<Index />} />
+    <Route path="/" element={<Navigate to="/auth" replace />} />
+    <Route path="/home" element={<ProtectedRoute><Index /></ProtectedRoute>} />
     <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />

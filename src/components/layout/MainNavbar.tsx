@@ -29,7 +29,7 @@ const MainNavbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
+            <Link to="/home" className="flex-shrink-0 flex items-center">
               <PieChart className="h-8 w-8 text-sky-blue" />
               <span className="ml-2 text-lg font-medium">InsightAnalytics</span>
             </Link>
@@ -38,7 +38,7 @@ const MainNavbar = () => {
           {/* Desktop navigation */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-4">
-              <Link to="/" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
+              <Link to="/home" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
                 Home
               </Link>
               <Link to="/dashboard" className="py-2 px-3 rounded-md hover:bg-steel-blue transition-colors">
@@ -109,7 +109,7 @@ const MainNavbar = () => {
         <div className="md:hidden bg-marine-blue border-t border-steel-blue">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link
-              to="/"
+              to="/home"
               className="block py-2 px-3 rounded-md hover:bg-steel-blue transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
