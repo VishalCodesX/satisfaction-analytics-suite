@@ -59,35 +59,36 @@ const Dashboard = () => {
     const uploadStatus = sessionStorage.getItem('hasUploadedData');
     const csvDataString = sessionStorage.getItem('csvData');
     
-    if (uploadStatus === 'true' && csvDataString) {
-      try {
-        const csvData: DataRow[] = JSON.parse(csvDataString);
-        if (csvData && csvData.length > 0) {
-          setHasUploadedData(true);
-          
-          // Process the data
-          const analysisData = analyzeData(csvData);
-          setDashboardData(analysisData);
-          
-          console.log("Dashboard data loaded from CSV analysis");
-        } else {
-          throw new Error("No data found");
-        }
-      } catch (error) {
-        toast({
-          title: "Error processing data",
-          description: "Something went wrong with the data analysis. Please try uploading again.",
-          variant: "destructive",
-        });
-        navigate('/upload');
-      }
-    } else {
+    if (uploadStatus !== 'true' || !csvDataString) {
+      // No data found, redirect to upload page
       toast({
         title: "No data available",
         description: "Please upload a dataset first to view insights.",
         variant: "destructive",
       });
-      // Redirect to upload page if no data
+      navigate('/upload');
+      return;
+    }
+    
+    try {
+      const csvData: DataRow[] = JSON.parse(csvDataString);
+      if (csvData && csvData.length > 0) {
+        setHasUploadedData(true);
+        
+        // Process the data
+        const analysisData = analyzeData(csvData);
+        setDashboardData(analysisData);
+        
+        console.log("Dashboard data loaded from CSV analysis");
+      } else {
+        throw new Error("No data found");
+      }
+    } catch (error) {
+      toast({
+        title: "Error processing data",
+        description: "Something went wrong with the data analysis. Please try uploading again.",
+        variant: "destructive",
+      });
       navigate('/upload');
     }
   }, [navigate, toast]);
