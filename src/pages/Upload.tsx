@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import PageLayout from "@/components/layout/PageLayout";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -35,14 +34,24 @@ const Upload = () => {
                     Your CSV file must include these columns:
                   </p>
                   <ul className="list-disc list-inside text-xs space-y-1 text-muted-foreground">
-                    <li>customer_id (string or integer)</li>
-                    <li>product_id (string or integer)</li>
-                    <li>product_category (string)</li>
-                    <li>product_quality (numeric, 1-5)</li>
-                    <li>price (numeric)</li>
-                    <li>delivery_time_days (numeric)</li>
-                    <li>return_policy (string: flexible, standard, strict)</li>
-                    <li>satisfaction_score (numeric, 1-5)</li>
+                    <li>Administrative (numeric)</li>
+                    <li>Administrative_Duration (numeric)</li>
+                    <li>Informational (numeric)</li>
+                    <li>Informational_Duration (numeric)</li>
+                    <li>ProductRelated (numeric)</li>
+                    <li>ProductRelated_Duration (numeric)</li>
+                    <li>BounceRates (numeric)</li>
+                    <li>ExitRates (numeric)</li>
+                    <li>PageValues (numeric)</li>
+                    <li>SpecialDay (numeric)</li>
+                    <li>Month (string)</li>
+                    <li>OperatingSystems (numeric)</li>
+                    <li>Browser (numeric)</li>
+                    <li>Region (numeric)</li>
+                    <li>TrafficType (numeric)</li>
+                    <li>VisitorType (string)</li>
+                    <li>Weekend (boolean)</li>
+                    <li>Revenue (boolean)</li>
                   </ul>
                 </div>
                 
@@ -107,7 +116,7 @@ const Upload = () => {
                     <p>
                       Your uploaded data is processed securely and used only for analysis purposes. 
                       We do not share your data with third parties. Data is stored encrypted 
-                      and automatically deleted after 30 days unless you choose to save it to your account.
+                      and automatically deleted after 30 days.
                     </p>
                   </AccordionContent>
                 </AccordionItem>
@@ -116,66 +125,54 @@ const Upload = () => {
           </div>
         </div>
         
-        {/* Data Examples and Tips */}
+        {/* Data Examples */}
         <div className="mt-12">
-          <h2 className="text-xl font-semibold mb-4">Examples & Tips</h2>
+          <h2 className="text-xl font-semibold mb-4">Sample Data Format</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow-sm border border-border p-6">
-              <h3 className="text-lg font-medium mb-3">Sample Data</h3>
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-xs">
-                  <thead className="bg-muted">
-                    <tr>
-                      <th className="py-2 px-3 text-left">customer_id</th>
-                      <th className="py-2 px-3 text-left">product_category</th>
-                      <th className="py-2 px-3 text-left">quality</th>
-                      <th className="py-2 px-3 text-left">price</th>
-                      <th className="py-2 px-3 text-left">delivery_days</th>
-                      <th className="py-2 px-3 text-left">satisfaction</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-muted">
-                    <tr>
-                      <td className="py-2 px-3">1001</td>
-                      <td className="py-2 px-3">electronics</td>
-                      <td className="py-2 px-3">4.5</td>
-                      <td className="py-2 px-3">599.99</td>
-                      <td className="py-2 px-3">2</td>
-                      <td className="py-2 px-3">4</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-3">1002</td>
-                      <td className="py-2 px-3">clothing</td>
-                      <td className="py-2 px-3">3.5</td>
-                      <td className="py-2 px-3">49.99</td>
-                      <td className="py-2 px-3">5</td>
-                      <td className="py-2 px-3">3</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-3">1003</td>
-                      <td className="py-2 px-3">home</td>
-                      <td className="py-2 px-3">5</td>
-                      <td className="py-2 px-3">199.99</td>
-                      <td className="py-2 px-3">1</td>
-                      <td className="py-2 px-3">5</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow-sm border border-border p-6">
-              <h3 className="text-lg font-medium mb-3">Tips for Better Results</h3>
-              <ul className="list-disc list-inside space-y-2 text-sm">
-                <li>Include at least 100 rows of data for meaningful analysis</li>
-                <li>Ensure your satisfaction scores reflect actual customer feedback</li>
-                <li>Include data across different time periods if available</li>
-                <li>Make sure numeric values are consistent (e.g., always use days for delivery time)</li>
-                <li>If you have historical data, include it to enable trend analysis</li>
-                <li>Clearly categorize your products for better segment analysis</li>
-              </ul>
-            </div>
+          <div className="bg-white rounded-lg shadow-sm border border-border p-6 overflow-x-auto">
+            <h3 className="text-lg font-medium mb-3">Example Data</h3>
+            <table className="min-w-full text-xs">
+              <thead className="bg-muted">
+                <tr>
+                  <th className="py-2 px-3 text-left">Administrative</th>
+                  <th className="py-2 px-3 text-left">Informational</th>
+                  <th className="py-2 px-3 text-left">ProductRelated</th>
+                  <th className="py-2 px-3 text-left">BounceRates</th>
+                  <th className="py-2 px-3 text-left">Month</th>
+                  <th className="py-2 px-3 text-left">VisitorType</th>
+                  <th className="py-2 px-3 text-left">Revenue</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-muted">
+                <tr>
+                  <td className="py-2 px-3">0</td>
+                  <td className="py-2 px-3">0</td>
+                  <td className="py-2 px-3">1</td>
+                  <td className="py-2 px-3">0.2</td>
+                  <td className="py-2 px-3">Feb</td>
+                  <td className="py-2 px-3">Returning_Visitor</td>
+                  <td className="py-2 px-3">FALSE</td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-3">0</td>
+                  <td className="py-2 px-3">0</td>
+                  <td className="py-2 px-3">2</td>
+                  <td className="py-2 px-3">0.0</td>
+                  <td className="py-2 px-3">Feb</td>
+                  <td className="py-2 px-3">Returning_Visitor</td>
+                  <td className="py-2 px-3">FALSE</td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-3">0</td>
+                  <td className="py-2 px-3">0</td>
+                  <td className="py-2 px-3">1</td>
+                  <td className="py-2 px-3">0.2</td>
+                  <td className="py-2 px-3">Feb</td>
+                  <td className="py-2 px-3">Returning_Visitor</td>
+                  <td className="py-2 px-3">FALSE</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

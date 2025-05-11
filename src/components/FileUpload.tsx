@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { FileText, Upload, AlertCircle, CheckCircle } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { FileText, Upload, AlertCircle, CheckCircle, LineChart } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -11,6 +12,7 @@ const FileUpload = () => {
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -48,15 +50,27 @@ const FileUpload = () => {
           clearInterval(interval);
           setUploading(false);
           setUploadStatus("success");
-          toast({
-            title: "Upload successful",
-            description: "Your data file has been uploaded and is being processed.",
-          });
+          // Using setTimeout to show the success message before navigating
+          // This calls toast outside of render
+          setTimeout(() => {
+            toast({
+              title: "Upload successful",
+              description: "Your data file has been uploaded and is being processed.",
+            });
+          }, 0);
           return 100;
         }
         return prevProgress + 10;
       });
     }, 300);
+  };
+
+  const handleGenerateInsights = () => {
+    // Save the file data to sessionStorage to indicate we have data
+    sessionStorage.setItem('hasUploadedData', 'true');
+    
+    // Navigate to dashboard page
+    navigate('/dashboard');
   };
   
   const renderUploadStatus = () => {
@@ -72,9 +86,18 @@ const FileUpload = () => {
       );
     } else if (uploadStatus === "success") {
       return (
-        <div className="mt-4 flex items-center text-green-600 dark:text-green-400">
-          <CheckCircle className="h-5 w-5 mr-2" />
-          <span>Upload complete! Processing data...</span>
+        <div className="mt-4">
+          <div className="flex items-center text-green-600 dark:text-green-400 mb-4">
+            <CheckCircle className="h-5 w-5 mr-2" />
+            <span>Upload complete! Ready to generate insights.</span>
+          </div>
+          <Button 
+            onClick={handleGenerateInsights} 
+            className="w-full bg-marine-blue hover:bg-steel-blue flex items-center justify-center"
+          >
+            <LineChart className="mr-2 h-5 w-5" />
+            Generate Insights
+          </Button>
         </div>
       );
     } else if (uploadStatus === "error") {
@@ -136,7 +159,7 @@ const FileUpload = () => {
               size="sm"
               className="bg-sky-blue hover:bg-cream hover:text-marine-blue text-marine-blue"
               onClick={handleUpload}
-              disabled={uploading}
+              disabled={uploading || uploadStatus === "success"}
             >
               {uploading ? "Uploading..." : "Upload"}
             </Button>

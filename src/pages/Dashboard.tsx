@@ -1,10 +1,13 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
 import FilterBar from "@/components/dashboard/FilterBar";
 import StatCard from "@/components/dashboard/StatCard";
 import ChartCard from "@/components/dashboard/ChartCard";
-import { FileText, Download, Filter } from "lucide-react";
+import { FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import {
   Area,
   AreaChart,
@@ -91,6 +94,25 @@ const Dashboard = () => {
   }>({
     timeRange: "30d",
   });
+  const [hasUploadedData, setHasUploadedData] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if data has been uploaded
+    const uploadStatus = sessionStorage.getItem('hasUploadedData');
+    if (uploadStatus === 'true') {
+      setHasUploadedData(true);
+    } else {
+      toast({
+        title: "No data available",
+        description: "Please upload a dataset first to view insights.",
+        variant: "destructive",
+      });
+      // Redirect to upload page if no data
+      navigate('/upload');
+    }
+  }, [navigate, toast]);
 
   const handleFilterChange = (newFilters: {
     category?: string;
@@ -101,6 +123,10 @@ const Dashboard = () => {
     console.log("Filters applied:", newFilters);
   };
 
+  if (!hasUploadedData) {
+    return null; // Don't render anything while redirecting
+  }
+
   return (
     <PageLayout>
       <div className="dashboard-container">
@@ -108,7 +134,7 @@ const Dashboard = () => {
           <div>
             <h1 className="text-2xl md:text-3xl font-bold">Customer Analysis Dashboard</h1>
             <p className="text-muted-foreground mt-1">
-              Insights and analytics from customer behavior data
+              Insights and analytics from your uploaded customer data
             </p>
           </div>
           <div className="flex gap-2 mt-4 sm:mt-0">
