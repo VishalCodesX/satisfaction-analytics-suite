@@ -12,6 +12,17 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Protected route component that checks for uploaded data
+const ProtectedDashboard = () => {
+  const hasUploadedData = sessionStorage.getItem('hasUploadedData') === 'true';
+  
+  if (!hasUploadedData) {
+    return <Navigate to="/upload" replace />;
+  }
+  
+  return <Dashboard />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -21,7 +32,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Index />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<ProtectedDashboard />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/about" element={<About />} />
           <Route path="*" element={<NotFound />} />

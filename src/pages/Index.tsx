@@ -1,10 +1,25 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { ChartLine, PieChart } from "lucide-react";
 
 const Index = () => {
+  const navigate = useNavigate();
+
+  const handleDashboardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Check if data has been uploaded
+    const hasUploadedData = sessionStorage.getItem('hasUploadedData') === 'true';
+    
+    if (hasUploadedData) {
+      navigate('/dashboard');
+    } else {
+      navigate('/upload');
+    }
+  };
+
   return (
     <PageLayout>
       {/* Hero Section */}
@@ -20,14 +35,12 @@ const Index = () => {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button 
-                asChild
                 size="lg" 
                 className="animate-slide-up bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue"
                 style={{ animationDelay: "200ms" }}
+                onClick={handleDashboardClick}
               >
-                <Link to="/dashboard">
-                  View Demo Dashboard
-                </Link>
+                View Dashboard
               </Button>
               <Button
                 asChild
@@ -199,13 +212,11 @@ const Index = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button 
-              asChild
               size="lg" 
               className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue"
+              onClick={handleDashboardClick}
             >
-              <Link to="/dashboard">
-                Explore Dashboard
-              </Link>
+              Explore Dashboard
             </Button>
             <Button
               asChild
