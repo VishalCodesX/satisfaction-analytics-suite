@@ -8,21 +8,11 @@ import {
   PieChart,
   Menu,
   X,
-  UserCircle,
-  LogOut,
-  LogIn
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 
 const MainNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
   const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth");
-  };
 
   return (
     <nav className="bg-marine-blue text-white sticky top-0 z-50 shadow-md">
@@ -54,37 +44,12 @@ const MainNavbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-2">
-            {user ? (
-              <>
-                <Button variant="outline" className="border-sky-blue text-sky-blue hover:bg-sky-blue hover:text-marine-blue flex items-center gap-2">
-                  <UserCircle size={18} />
-                  {user.email?.split('@')[0]}
-                </Button>
-                <Button 
-                  onClick={handleSignOut}
-                  className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue flex items-center gap-2"
-                >
-                  <LogOut size={18} />
-                  Sign Out
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button 
-                  variant="outline" 
-                  className="border-sky-blue text-sky-blue hover:bg-sky-blue hover:text-marine-blue"
-                  onClick={() => navigate("/auth")}
-                >
-                  Sign In
-                </Button>
-                <Button 
-                  className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue"
-                  onClick={() => navigate("/auth")}
-                >
-                  Get Started
-                </Button>
-              </>
-            )}
+            <Button
+              className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue"
+              onClick={() => navigate("/dashboard")}
+            >
+              Get Started
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -137,45 +102,16 @@ const MainNavbar = () => {
               About
             </Link>
           </div>
-          <div className="px-2 py-3 border-t border-steel-blue flex flex-col space-y-2">
-            {user ? (
-              <>
-                <div className="text-sky-blue py-2 px-3 flex items-center gap-2">
-                  <UserCircle size={18} />
-                  {user.email?.split('@')[0]}
-                </div>
-                <Button 
-                  onClick={handleSignOut}
-                  className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue w-full flex items-center justify-center gap-2"
-                >
-                  <LogOut size={18} />
-                  Sign Out
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button 
-                  variant="outline" 
-                  className="border-sky-blue text-sky-blue hover:bg-sky-blue hover:text-marine-blue w-full"
-                  onClick={() => {
-                    navigate("/auth");
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
-                </Button>
-                <Button 
-                  className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue w-full"
-                  onClick={() => {
-                    navigate("/auth");
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  Get Started
-                </Button>
-              </>
-            )}
+          <div className="px-2 py-3 border-t border-steel-blue">
+            <Button 
+              className="bg-sky-blue text-marine-blue hover:bg-cream hover:text-marine-blue w-full"
+              onClick={() => {
+                navigate("/dashboard");
+                setMobileMenuOpen(false);
+              }}
+            >
+              Get Started
+            </Button>
           </div>
         </div>
       )}
