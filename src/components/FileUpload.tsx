@@ -5,12 +5,14 @@ import { Progress } from "@/components/ui/progress";
 import { FileText, Upload, AlertCircle, CheckCircle, LineChart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { parseCSV, DataRow } from "@/utils/csvParser";
 
 const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
+  const [parsedData, setParsedData] = useState<DataRow[] | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -20,6 +22,7 @@ const FileUpload = () => {
       setFile(selectedFile);
       setUploadStatus("idle");
       setUploadProgress(0);
+      setParsedData(null);
     }
   };
   
@@ -34,38 +37,62 @@ const FileUpload = () => {
       setFile(droppedFile);
       setUploadStatus("idle");
       setUploadProgress(0);
+      setParsedData(null);
     }
   };
   
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!file) return;
     
     setUploading(true);
     setUploadStatus("uploading");
     
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress((prevProgress) => {
-        if (prevProgress >= 100) {
-          clearInterval(interval);
-          setUploading(false);
-          setUploadStatus("success");
-          // Using setTimeout to show the success message before navigating
-          // This calls toast outside of render
-          setTimeout(() => {
-            toast({
-              title: "Upload successful",
-              description: "Your data file has been uploaded and is being processed.",
-            });
-          }, 0);
-          return 100;
-        }
-        return prevProgress + 10;
+    try {
+      // Start progress simulation
+      const interval = setInterval(() => {
+        setUploadProgress((prevProgress) => {
+          if (prevProgress >= 90) {
+            clearInterval(interval);
+            return 90;
+          }
+          return prevProgress + 10;
+        });
+      }, 200);
+      
+      // Parse the CSV file
+      const data = await parseCSV(file);
+      
+      // Complete the progress
+      clearInterval(interval);
+      setUploadProgress(100);
+      setParsedData(data);
+      setUploading(false);
+      setUploadStatus("success");
+      
+      // Store data in sessionStorage
+      sessionStorage.setItem('hasUploadedData', 'true');
+      sessionStorage.setItem('csvData', JSON.stringify(data));
+      
+      toast({
+        title: "Upload successful",
+        description: `Processed ${data.length} rows of data. Ready to generate insights.`,
       });
-    }, 300);
+    } catch (error) {
+      setUploading(false);
+      setUploadStatus("error");
+      setUploadProgress(0);
+      
+      toast({
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : "Could not process CSV file",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleGenerateInsights = () => {
+    if (!parsedData) return;
+    
     // Save the file data to sessionStorage to indicate we have data
     sessionStorage.setItem('hasUploadedData', 'true');
     
@@ -89,7 +116,7 @@ const FileUpload = () => {
         <div className="mt-4">
           <div className="flex items-center text-green-600 dark:text-green-400 mb-4">
             <CheckCircle className="h-5 w-5 mr-2" />
-            <span>Upload complete! Ready to generate insights.</span>
+            <span>Upload complete! {parsedData?.length} rows processed. Ready to generate insights.</span>
           </div>
           <Button 
             onClick={handleGenerateInsights} 
@@ -104,7 +131,7 @@ const FileUpload = () => {
       return (
         <div className="mt-4 flex items-center text-red-600 dark:text-red-400">
           <AlertCircle className="h-5 w-5 mr-2" />
-          <span>Upload failed. Please try again.</span>
+          <span>Upload failed. Please try again with a valid CSV file.</span>
         </div>
       );
     }

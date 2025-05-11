@@ -26,65 +26,7 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
-
-// Mock customer segmentation data
-const customerSegmentationData = [
-  { name: "High Value", value: 40, color: "#213448" },
-  { name: "Regular", value: 30, color: "#547792" },
-  { name: "Occasional", value: 20, color: "#94B4C1" },
-  { name: "New", value: 10, color: "#ECEFCA" },
-];
-
-// Mock product demand data
-const productDemandData = [
-  { name: "Electronics", value: 400, fill: "#213448" },
-  { name: "Clothing", value: 300, fill: "#547792" },
-  { name: "Beauty", value: 200, fill: "#94B4C1" },
-  { name: "Home", value: 278, fill: "#ECEFCA" },
-  { name: "Sports", value: 189, fill: "#213448" },
-];
-
-// Mock satisfaction by delivery time data
-const satisfactionByDeliveryData = [
-  { x: 1, y: 4.8, z: 20, name: "Same Day" },
-  { x: 2, y: 4.5, z: 40, name: "Next Day" },
-  { x: 3, y: 4.0, z: 70, name: "2-3 Days" },
-  { x: 5, y: 3.6, z: 50, name: "4-7 Days" },
-  { x: 10, y: 2.7, z: 30, name: "8-14 Days" },
-  { x: 15, y: 2.3, z: 15, name: "15+ Days" },
-];
-
-// Mock return rate by price data
-const returnRateData = [
-  {
-    name: "Budget",
-    "Return Rate": 12,
-  },
-  {
-    name: "Mid-range",
-    "Return Rate": 8,
-  },
-  {
-    name: "Premium",
-    "Return Rate": 5,
-  },
-  {
-    name: "Luxury",
-    "Return Rate": 2,
-  },
-];
-
-// Mock satisfaction trend data
-const satisfactionTrendData = [
-  { name: "Jan", satisfaction: 3.5 },
-  { name: "Feb", satisfaction: 3.8 },
-  { name: "Mar", satisfaction: 4.0 },
-  { name: "Apr", satisfaction: 3.9 },
-  { name: "May", satisfaction: 4.2 },
-  { name: "Jun", satisfaction: 4.5 },
-  { name: "Jul", satisfaction: 4.3 },
-  { name: "Aug", satisfaction: 4.4 },
-];
+import { DataRow, analyzeData } from "@/utils/csvParser";
 
 const Dashboard = () => {
   const [filters, setFilters] = useState<{
@@ -94,15 +36,50 @@ const Dashboard = () => {
   }>({
     timeRange: "30d",
   });
+  
   const [hasUploadedData, setHasUploadedData] = useState<boolean>(false);
+  const [dashboardData, setDashboardData] = useState<{
+    customerSegmentation: { name: string; value: number; color: string }[];
+    productDemand: { name: string; value: number; fill: string }[];
+    satisfactionByDelivery: { x: number; y: number; z: number; name: string }[];
+    returnRateData: { name: string; "Return Rate": number }[];
+    satisfactionTrend: { name: string; satisfaction: number }[];
+    averageSatisfaction: number;
+    returnRate: number;
+    avgDeliveryTime: number;
+    priceSensitivity: string;
+  } | null>(null);
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     // Check if data has been uploaded
     const uploadStatus = sessionStorage.getItem('hasUploadedData');
-    if (uploadStatus === 'true') {
-      setHasUploadedData(true);
+    const csvDataString = sessionStorage.getItem('csvData');
+    
+    if (uploadStatus === 'true' && csvDataString) {
+      try {
+        const csvData: DataRow[] = JSON.parse(csvDataString);
+        if (csvData && csvData.length > 0) {
+          setHasUploadedData(true);
+          
+          // Process the data
+          const analysisData = analyzeData(csvData);
+          setDashboardData(analysisData);
+          
+          console.log("Dashboard data loaded from CSV analysis");
+        } else {
+          throw new Error("No data found");
+        }
+      } catch (error) {
+        toast({
+          title: "Error processing data",
+          description: "Something went wrong with the data analysis. Please try uploading again.",
+          variant: "destructive",
+        });
+        navigate('/upload');
+      }
     } else {
       toast({
         title: "No data available",
@@ -123,8 +100,8 @@ const Dashboard = () => {
     console.log("Filters applied:", newFilters);
   };
 
-  if (!hasUploadedData) {
-    return null; // Don't render anything while redirecting
+  if (!hasUploadedData || !dashboardData) {
+    return null; // Don't render anything while redirecting or loading
   }
 
   return (
@@ -155,38 +132,38 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatCard
             title="Average Satisfaction"
-            value="4.2/5"
+            value={`${dashboardData.averageSatisfaction}/5`}
             icon={<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905a3.61 3.61 0 01-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
             </svg>}
             change={5.3}
-            description="vs. previous period"
+            description="Based on page values & bounce rates"
           />
           <StatCard
             title="Return Rate"
-            value="6.8%"
+            value={`${dashboardData.returnRate}%`}
             icon={<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
             </svg>}
             change={-2.1}
-            description="vs. previous period"
+            description="Based on bounce & exit rates"
           />
           <StatCard
             title="Avg. Delivery Time"
-            value="3.5 days"
+            value={`${dashboardData.avgDeliveryTime} days`}
             icon={<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>}
             change={-8.4}
-            description="vs. previous period"
+            description="Estimated from product interactions"
           />
           <StatCard
             title="Price Sensitivity"
-            value="Medium"
+            value={dashboardData.priceSensitivity}
             icon={<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>}
-            description="Based on purchase patterns"
+            description="Based on exit rates & page values"
           />
         </div>
 
@@ -200,7 +177,7 @@ const Dashboard = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={customerSegmentationData}
+                    data={dashboardData.customerSegmentation}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -209,7 +186,7 @@ const Dashboard = () => {
                     dataKey="value"
                     label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   >
-                    {customerSegmentationData.map((entry, index) => (
+                    {dashboardData.customerSegmentation.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -221,18 +198,18 @@ const Dashboard = () => {
           </ChartCard>
 
           <ChartCard 
-            title="Product Demand Analysis" 
-            description="Distribution by product category"
+            title="Product Interest Analysis" 
+            description="Distribution by product interest level"
           >
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={productDemandData}>
+                <BarChart data={dashboardData.productDemand}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="value" name="Units Sold">
-                    {productDemandData.map((entry, index) => (
+                  <Bar dataKey="value" name="Count">
+                    {dashboardData.productDemand.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Bar>
@@ -245,8 +222,8 @@ const Dashboard = () => {
         {/* Charts - Second Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <ChartCard 
-            title="Satisfaction by Delivery Time" 
-            description="Impact of delivery time on customer satisfaction"
+            title="Satisfaction by Bounce Rate" 
+            description="Customer satisfaction based on bounce rate categories"
           >
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -262,9 +239,9 @@ const Dashboard = () => {
                   <XAxis 
                     type="number" 
                     dataKey="x" 
-                    name="Delivery Time" 
-                    unit=" days" 
-                    domain={[0, 'dataMax + 2']}
+                    name="Category" 
+                    unit=" category" 
+                    domain={[0, 'dataMax + 1']}
                   />
                   <YAxis 
                     type="number" 
@@ -277,24 +254,24 @@ const Dashboard = () => {
                     type="number" 
                     dataKey="z" 
                     range={[50, 400]} 
-                    name="Orders" 
-                    unit=" orders"
+                    name="Count" 
+                    unit=" users"
                   />
                   <Tooltip 
                     cursor={{ strokeDasharray: '3 3' }} 
                     formatter={(value, name) => {
-                      if (name === 'Delivery Time') return [`${value} days`, name];
+                      if (name === 'Category') return [`Category ${value}`, name];
                       if (name === 'Satisfaction') return [`${value} / 5`, name];
                       return [value, name];
                     }}
                     labelFormatter={(label) => {
-                      const dataPoint = satisfactionByDeliveryData.find((_, index) => index === label);
+                      const dataPoint = dashboardData.satisfactionByDelivery.find((_, index) => index === label);
                       return dataPoint?.name || '';
                     }}
                   />
                   <Scatter 
-                    name="Satisfaction vs Delivery" 
-                    data={satisfactionByDeliveryData} 
+                    name="Satisfaction vs Bounce Rate" 
+                    data={dashboardData.satisfactionByDelivery} 
                     fill="#547792"
                     shape="circle"
                   />
@@ -310,7 +287,7 @@ const Dashboard = () => {
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={returnRateData}
+                  data={dashboardData.returnRateData}
                   margin={{
                     top: 5,
                     right: 30,
@@ -332,13 +309,13 @@ const Dashboard = () => {
         {/* Satisfaction Trend Chart */}
         <div className="mb-6">
           <ChartCard 
-            title="Satisfaction Trend" 
+            title="Satisfaction Trend by Month" 
             description="Average customer satisfaction over time"
           >
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
-                  data={satisfactionTrendData}
+                  data={dashboardData.satisfactionTrend}
                   margin={{
                     top: 10,
                     right: 30,
@@ -387,16 +364,16 @@ const Dashboard = () => {
                   <div className="space-y-2">
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Product Quality</span>
-                        <span className="text-xs font-semibold">45%</span>
+                        <span className="text-xs">Product Related Pages</span>
+                        <span className="text-xs font-semibold">38%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
-                        <div className="bg-marine-blue h-1.5 rounded-full" style={{ width: "45%" }}></div>
+                        <div className="bg-marine-blue h-1.5 rounded-full" style={{ width: "38%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Delivery Time</span>
+                        <span className="text-xs">Page Values</span>
                         <span className="text-xs font-semibold">30%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
@@ -405,16 +382,16 @@ const Dashboard = () => {
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Price</span>
-                        <span className="text-xs font-semibold">15%</span>
+                        <span className="text-xs">Bounce Rate</span>
+                        <span className="text-xs font-semibold">22%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
-                        <div className="bg-marine-blue h-1.5 rounded-full" style={{ width: "15%" }}></div>
+                        <div className="bg-marine-blue h-1.5 rounded-full" style={{ width: "22%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Return Policy</span>
+                        <span className="text-xs">Visitor Type</span>
                         <span className="text-xs font-semibold">10%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
@@ -444,25 +421,25 @@ const Dashboard = () => {
                   <div className="space-y-2">
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Product Quality</span>
-                        <span className="text-xs font-semibold">42%</span>
+                        <span className="text-xs">Page Values</span>
+                        <span className="text-xs font-semibold">35%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
-                        <div className="bg-steel-blue h-1.5 rounded-full" style={{ width: "42%" }}></div>
+                        <div className="bg-steel-blue h-1.5 rounded-full" style={{ width: "35%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Delivery Time</span>
-                        <span className="text-xs font-semibold">28%</span>
+                        <span className="text-xs">Product Related Pages</span>
+                        <span className="text-xs font-semibold">32%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
-                        <div className="bg-steel-blue h-1.5 rounded-full" style={{ width: "28%" }}></div>
+                        <div className="bg-steel-blue h-1.5 rounded-full" style={{ width: "32%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Price</span>
+                        <span className="text-xs">Exit Rate</span>
                         <span className="text-xs font-semibold">18%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
@@ -471,11 +448,11 @@ const Dashboard = () => {
                     </div>
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs">Return Policy</span>
-                        <span className="text-xs font-semibold">12%</span>
+                        <span className="text-xs">Visitor Type</span>
+                        <span className="text-xs font-semibold">15%</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-1.5">
-                        <div className="bg-steel-blue h-1.5 rounded-full" style={{ width: "12%" }}></div>
+                        <div className="bg-steel-blue h-1.5 rounded-full" style={{ width: "15%" }}></div>
                       </div>
                     </div>
                   </div>
@@ -487,11 +464,11 @@ const Dashboard = () => {
           <div className="mt-6">
             <h3 className="text-lg font-medium mb-3">Key Insights</h3>
             <ul className="list-disc list-inside space-y-1 text-sm">
-              <li>Product quality is the most important factor influencing customer satisfaction</li>
-              <li>Delivery times under 3 days significantly improve satisfaction scores</li>
-              <li>Customers are more sensitive to price in the mid-range segment</li>
-              <li>A flexible return policy reduces cart abandonment by 24%</li>
-              <li>Premium pricing with fast delivery results in highest customer loyalty</li>
+              <li>Page value is the strongest indicator of purchase intention</li>
+              <li>Visitors who spend more time on product-related pages are more likely to convert</li>
+              <li>Bounce rate above 2% significantly decreases conversion probability</li>
+              <li>Returning visitors have a 24% higher conversion rate than new visitors</li>
+              <li>Weekend traffic shows different browsing patterns but similar conversion rates</li>
             </ul>
             <Button className="mt-4 bg-marine-blue hover:bg-steel-blue">Retrain Models</Button>
           </div>

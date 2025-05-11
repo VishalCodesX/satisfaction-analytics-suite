@@ -138,8 +138,10 @@ const Upload = () => {
                   <th className="py-2 px-3 text-left">Informational</th>
                   <th className="py-2 px-3 text-left">ProductRelated</th>
                   <th className="py-2 px-3 text-left">BounceRates</th>
+                  <th className="py-2 px-3 text-left">PageValues</th>
                   <th className="py-2 px-3 text-left">Month</th>
                   <th className="py-2 px-3 text-left">VisitorType</th>
+                  <th className="py-2 px-3 text-left">Weekend</th>
                   <th className="py-2 px-3 text-left">Revenue</th>
                 </tr>
               </thead>
@@ -147,29 +149,35 @@ const Upload = () => {
                 <tr>
                   <td className="py-2 px-3">0</td>
                   <td className="py-2 px-3">0</td>
-                  <td className="py-2 px-3">1</td>
-                  <td className="py-2 px-3">0.2</td>
-                  <td className="py-2 px-3">Feb</td>
-                  <td className="py-2 px-3">Returning_Visitor</td>
-                  <td className="py-2 px-3">FALSE</td>
-                </tr>
-                <tr>
-                  <td className="py-2 px-3">0</td>
-                  <td className="py-2 px-3">0</td>
-                  <td className="py-2 px-3">2</td>
+                  <td className="py-2 px-3">12</td>
+                  <td className="py-2 px-3">0.0</td>
                   <td className="py-2 px-3">0.0</td>
                   <td className="py-2 px-3">Feb</td>
                   <td className="py-2 px-3">Returning_Visitor</td>
                   <td className="py-2 px-3">FALSE</td>
+                  <td className="py-2 px-3">FALSE</td>
                 </tr>
                 <tr>
                   <td className="py-2 px-3">0</td>
                   <td className="py-2 px-3">0</td>
                   <td className="py-2 px-3">1</td>
                   <td className="py-2 px-3">0.2</td>
+                  <td className="py-2 px-3">0.0</td>
                   <td className="py-2 px-3">Feb</td>
                   <td className="py-2 px-3">Returning_Visitor</td>
                   <td className="py-2 px-3">FALSE</td>
+                  <td className="py-2 px-3">FALSE</td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-3">1</td>
+                  <td className="py-2 px-3">1</td>
+                  <td className="py-2 px-3">2</td>
+                  <td className="py-2 px-3">0.0</td>
+                  <td className="py-2 px-3">0.0</td>
+                  <td className="py-2 px-3">Feb</td>
+                  <td className="py-2 px-3">New_Visitor</td>
+                  <td className="py-2 px-3">TRUE</td>
+                  <td className="py-2 px-3">TRUE</td>
                 </tr>
               </tbody>
             </table>
