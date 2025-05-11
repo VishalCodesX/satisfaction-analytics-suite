@@ -20,6 +20,8 @@ interface FilterBarProps {
     category?: string;
     timeRange?: string;
     satisfaction?: string;
+    priceRange?: { min: number; max: number };
+    deliveryTime?: { min: number; max: number };
   }) => void;
 }
 
@@ -27,25 +29,78 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
   const [category, setCategory] = useState<string>("");
   const [timeRange, setTimeRange] = useState<string>("30d");
   const [satisfaction, setSatisfaction] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 1000 });
+  const [deliveryTime, setDeliveryTime] = useState<{ min: number; max: number }>({ min: 1, max: 14 });
 
   const handleFilterChange = (
-    key: "category" | "timeRange" | "satisfaction",
-    value: string
+    key: "category" | "timeRange" | "satisfaction" | "priceRange" | "deliveryTime",
+    value: any
   ) => {
-    let updatedFilters = {};
+    let updatedFilters = {
+      category,
+      timeRange,
+      satisfaction,
+      priceRange,
+      deliveryTime,
+    };
     
     if (key === "category") {
       setCategory(value);
-      updatedFilters = { category: value, timeRange, satisfaction };
+      updatedFilters.category = value;
     } else if (key === "timeRange") {
       setTimeRange(value);
-      updatedFilters = { category, timeRange: value, satisfaction };
+      updatedFilters.timeRange = value;
     } else if (key === "satisfaction") {
       setSatisfaction(value);
-      updatedFilters = { category, timeRange, satisfaction: value };
+      updatedFilters.satisfaction = value;
+    } else if (key === "priceRange") {
+      setPriceRange(value);
+      updatedFilters.priceRange = value;
+    } else if (key === "deliveryTime") {
+      setDeliveryTime(value);
+      updatedFilters.deliveryTime = value;
     }
     
     onFilterChange(updatedFilters);
+  };
+
+  const handlePriceInputChange = (field: 'min' | 'max', value: string) => {
+    const numValue = value === '' ? 0 : Number(value);
+    setPriceRange(prev => {
+      const updated = { ...prev, [field]: numValue };
+      return updated;
+    });
+  };
+
+  const handleDeliveryTimeInputChange = (field: 'min' | 'max', value: string) => {
+    const numValue = value === '' ? 0 : Number(value);
+    setDeliveryTime(prev => {
+      const updated = { ...prev, [field]: numValue };
+      return updated;
+    });
+  };
+
+  const applyAdvancedFilters = () => {
+    onFilterChange({
+      category,
+      timeRange,
+      satisfaction,
+      priceRange,
+      deliveryTime,
+    });
+  };
+
+  const resetAdvancedFilters = () => {
+    setPriceRange({ min: 0, max: 1000 });
+    setDeliveryTime({ min: 1, max: 14 });
+    
+    onFilterChange({
+      category,
+      timeRange,
+      satisfaction,
+      priceRange: { min: 0, max: 1000 },
+      deliveryTime: { min: 1, max: 14 },
+    });
   };
 
   return (
@@ -113,6 +168,8 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
                   <input
                     type="number"
                     placeholder="0"
+                    value={priceRange.min}
+                    onChange={(e) => handlePriceInputChange('min', e.target.value)}
                     className="w-full rounded border border-input bg-background px-3 py-1"
                   />
                 </div>
@@ -121,6 +178,8 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
                   <input
                     type="number"
                     placeholder="1000"
+                    value={priceRange.max}
+                    onChange={(e) => handlePriceInputChange('max', e.target.value)}
                     className="w-full rounded border border-input bg-background px-3 py-1"
                   />
                 </div>
@@ -134,6 +193,8 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
                   <input
                     type="number"
                     placeholder="1"
+                    value={deliveryTime.min}
+                    onChange={(e) => handleDeliveryTimeInputChange('min', e.target.value)}
                     className="w-full rounded border border-input bg-background px-3 py-1"
                   />
                 </div>
@@ -142,14 +203,16 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
                   <input
                     type="number"
                     placeholder="14"
+                    value={deliveryTime.max}
+                    onChange={(e) => handleDeliveryTimeInputChange('max', e.target.value)}
                     className="w-full rounded border border-input bg-background px-3 py-1"
                   />
                 </div>
               </div>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" size="sm">Reset</Button>
-              <Button size="sm">Apply</Button>
+              <Button variant="outline" size="sm" onClick={resetAdvancedFilters}>Reset</Button>
+              <Button size="sm" onClick={applyAdvancedFilters}>Apply</Button>
             </div>
           </div>
         </PopoverContent>
