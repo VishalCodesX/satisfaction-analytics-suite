@@ -129,11 +129,12 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="your.email@example.com" 
-                            {...field} 
+                          <Input
+                            placeholder="your.email@example.com"
+                            {...field}
                             type="email"
                             autoComplete="email"
+                            id="login-email"
                           />
                         </FormControl>
                         <FormMessage />
@@ -147,11 +148,12 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="******" 
-                            {...field} 
+                          <Input
+                            placeholder="******"
+                            {...field}
                             type="password"
                             autoComplete="current-password"
+                            id="login-password"
                           />
                         </FormControl>
                         <FormMessage />
@@ -177,11 +179,12 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="John Doe" 
-                            {...field} 
+                          <Input
+                            placeholder="John Doe"
                             type="text"
+                            id="signup-fullname"
                             autoComplete="name"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -195,11 +198,12 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="your.email@example.com" 
-                            {...field} 
+                          <Input
+                            placeholder="your.email@example.com"
                             type="email"
+                            id="signup-email"
                             autoComplete="email"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -213,11 +217,12 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="******" 
-                            {...field} 
+                          <Input
+                            placeholder="******"
                             type="password"
+                            id="signup-password"
                             autoComplete="new-password"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -231,11 +236,12 @@ const Auth = () => {
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="******" 
-                            {...field} 
+                          <Input
+                            placeholder="******"
                             type="password"
+                            id="signup-confirm-password"
                             autoComplete="new-password"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
