@@ -180,6 +180,7 @@ const Auth = () => {
                           <Input 
                             placeholder="John Doe" 
                             {...field} 
+                            type="text"
                             autoComplete="name"
                           />
                         </FormControl>
